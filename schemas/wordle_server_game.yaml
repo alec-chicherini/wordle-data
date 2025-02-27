@@ -1,0 +1,48 @@
+# yaml
+components:
+    schemas:
+        NewGameRequestBody:
+            type: object
+            additionalProperties: false
+            properties:
+                user_uuid:
+                    $ref: 'types.yaml#/components/schemas/UUID'
+            required:
+              - user_uuid
+        NewGameResponseBody:
+            type: object
+            additionalProperties: false
+            properties:
+                game_uuid:
+                    $ref: 'types.yaml#/components/schemas/UUID'
+            required:
+              - game_uuid
+        ProcessRowRequestBody:
+            type: object
+            additionalProperties: false
+            properties:
+                user_uuid:
+                    $ref: 'types.yaml#/components/schemas/UUID'
+                game_uuid:
+                    $ref: 'types.yaml#/components/schemas/UUID'
+                word:
+                    type: string
+            required:
+              - game_uuid
+              - user_uuid
+              - word
+        ProcessRowResponseBody:
+            type: object
+            additionalProperties: false
+            properties:
+                check_the_row_result:
+                    type: integer
+                the_char_colors:
+                    type: array
+                    items:
+                      type: integer
+                number_of_attempts_left:
+                    type: integer
+            required:
+              - check_the_row_result
+              - the_char_colors
