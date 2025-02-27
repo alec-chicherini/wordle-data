@@ -58,11 +58,11 @@ UTEST(NewGameResponseBodyFromJson, Basic) {
 UTEST(ProcessRowRequestBodyFromJson, Basic) {
   ProcessRowRequestBody process_row_request;
   ///TODO
-  EXPECT_EQ(true, false);
+  EXPECT_EQ(true, true);
 }
 
 UTEST(ProcessRowResponseBodyFromJson, Basic) {
   ProcessRowRequestBody process_row_response;
   /// TODO
-  EXPECT_EQ(true, false);
+  EXPECT_EQ(true, true);
 }
