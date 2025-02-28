@@ -3,12 +3,15 @@
 - С помощью userver chaotic-gen генерируются с++ файлы для других проектов. 
 - И запускаются тесты на сгенерированных файлах.
 
-## Сгенерировать С++ файлы и запустить тесты
+## Сгенерировать файлы
 ```bash
 git clone https://github.com/alec-chicherini/wordle-json.git
 cd wordle-json
-git submodule init
-git submodule update
 docker build --target=wordle_json_build . -t wordle-json-build
 cd ~
+```
+
+## Запустить тесты
+```bash
+docker run --rm --privileged wordle-json-build
 ```

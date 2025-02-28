@@ -6,7 +6,8 @@ RUN apt update && \
     python3 \
     build-essential \
     xz-utils \
-    wget
+    wget \
+    clang-format
 
 RUN wget -O - https://raw.githubusercontent.com/alec-chicherini/development-scripts/refs/heads/main/cmake/install_cmake.sh 2>/dev/null | bash
 
@@ -20,13 +21,11 @@ RUN wget https://github.com/userver-framework/userver/releases/download/v2.7/ubu
     dpkg -i ubuntu24.04-libuserver-all-dev_2.7_amd64.deb
 
 FROM ubuntu2404_userver_2_7 AS wordle_json_build
-RUN apt install clang-format -y
 COPY . /wordle-json
 RUN cd /wordle-json && mkdir build && cd build && \
     cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 && \
     cmake --build . && \
     mkdir /result && \
-    ctest -VV . > /result/test.log && \
     cp src/schemas/* /result 
 
-ENTRYPOINT ["ls /result && cat /result/test.log" ]
+ENTRYPOINT ["ctest","-VV","--test-dir","/wordle-json/build" ]
