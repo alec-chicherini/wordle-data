@@ -43,6 +43,8 @@ components:
                       type: integer
                 number_of_attempts_left:
                     type: integer
+                word_answer:
+                    type: string
             required:
               - check_the_row_result
               - the_char_colors

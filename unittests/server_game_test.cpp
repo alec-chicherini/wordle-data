@@ -3,7 +3,7 @@
 #include <enums/server_game.hpp>
 #include <format>
 #include <schemas/server_game.hpp>
-#include <userver/server/handlers/http_handler_base.hpp>  //userver::formats::json::FromString
+#include <userver/formats/json.hpp> 
 #include <userver/utest/utest.hpp>
 #include <userver/utils/boost_uuid4.hpp>
 using namespace wordle_json;
