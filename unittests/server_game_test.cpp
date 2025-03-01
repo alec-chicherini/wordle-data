@@ -15,9 +15,9 @@ class GameServerTest : public ::testing::Test {
   }
   std::string str_uuid;
 };
-class NewGameRequestBodyTest : public GameServerTest {
+class RequestNewGameBodyTest : public GameServerTest {
  protected:
-  NewGameRequestBodyTest() {
+  RequestNewGameBodyTest() {
     json_new_game_request =
         std::string(std::format(R"({{"user_uuid":"{}"}})", str_uuid));
   }
@@ -25,9 +25,9 @@ class NewGameRequestBodyTest : public GameServerTest {
  public:
   std::string json_new_game_request;
 };
-class NewGameResponseBodyTest : public GameServerTest {
+class ResponseNewGameBodyTest : public GameServerTest {
  protected:
-  NewGameResponseBodyTest() {
+  ResponseNewGameBodyTest() {
     json_new_game_response =
         std::string(std::format(R"({{"game_uuid":"{}"}})", str_uuid));
   }
@@ -35,9 +35,9 @@ class NewGameResponseBodyTest : public GameServerTest {
  public:
   std::string json_new_game_response;
 };
-class ProcessRowRequestBodyTest : public GameServerTest {
+class RequestCheckTheRowBodyTest : public GameServerTest {
  protected:
-  ProcessRowRequestBodyTest() {
+  RequestCheckTheRowBodyTest() {
     str_word = "ЗАЧЕМ";
     json_process_row_request = std::string(std::format(
         R"({{"user_uuid":"{}",
@@ -50,9 +50,9 @@ class ProcessRowRequestBodyTest : public GameServerTest {
   std::string json_process_row_request;
   std::string str_word;
 };
-class ProcessRowResponseBodyTest : public GameServerTest {
+class ResponseCheckTheRowBodyTest : public GameServerTest {
  protected:
-  ProcessRowResponseBodyTest() {
+  ResponseCheckTheRowBodyTest() {
     check_the_row_result_ = static_cast<int>(CheckTheRowResult::kWordIsAnswer);
     char_color_1 = static_cast<int>(TheCharColor::kGreen);
     char_color_2 = static_cast<int>(TheCharColor::kGreen);
@@ -79,57 +79,57 @@ class ProcessRowResponseBodyTest : public GameServerTest {
   int number_of_attempts_left_;
 };
 
-UTEST_F(NewGameRequestBodyTest, Create) {
+UTEST_F(RequestNewGameBodyTest, Create) {
   auto uuid_rand = userver::utils::generators::GenerateBoostUuid();
-  NewGameRequestBody obj_1;
+  RequestNewGameBody obj_1;
   obj_1.user_uuid = uuid_rand;
-  NewGameRequestBody obj_2{uuid_rand};
-  NewGameRequestBody obj_3 = {.user_uuid = uuid_rand};
+  RequestNewGameBody obj_2{uuid_rand};
+  RequestNewGameBody obj_3 = {.user_uuid = uuid_rand};
 
   EXPECT_EQ(obj_1.user_uuid, obj_2.user_uuid);
   EXPECT_EQ(obj_1.user_uuid, obj_3.user_uuid);
 }
 
-UTEST_F(NewGameRequestBodyTest, FromJson) {
+UTEST_F(RequestNewGameBodyTest, FromJson) {
   auto userver_json = userver::formats::json::FromString(json_new_game_request);
-  NewGameRequestBody obj = userver_json.As<NewGameRequestBody>();
+  RequestNewGameBody obj = userver_json.As<RequestNewGameBody>();
 
   auto boost_uuid = userver::utils::BoostUuidFromString(str_uuid);
 
   EXPECT_EQ(obj.user_uuid, boost_uuid);
 }
 
-UTEST_F(NewGameResponseBodyTest, Create) {
+UTEST_F(ResponseNewGameBodyTest, Create) {
   auto uuid_rand = userver::utils::generators::GenerateBoostUuid();
-  NewGameResponseBody obj_1;
+  ResponseNewGameBody obj_1;
   obj_1.game_uuid = uuid_rand;
-  NewGameResponseBody obj_2{uuid_rand};
-  NewGameResponseBody obj_3 = {.game_uuid = uuid_rand};
+  ResponseNewGameBody obj_2{uuid_rand};
+  ResponseNewGameBody obj_3 = {.game_uuid = uuid_rand};
 
   EXPECT_EQ(obj_1.game_uuid, obj_2.game_uuid);
   EXPECT_EQ(obj_1.game_uuid, obj_3.game_uuid);
 }
 
-UTEST_F(NewGameResponseBodyTest, FromJson) {
+UTEST_F(ResponseNewGameBodyTest, FromJson) {
   auto userver_json =
       userver::formats::json::FromString(json_new_game_response);
-  NewGameResponseBody obj = userver_json.As<NewGameResponseBody>();
+  ResponseNewGameBody obj = userver_json.As<ResponseNewGameBody>();
 
   auto boost_uuid = userver::utils::BoostUuidFromString(str_uuid);
 
   EXPECT_EQ(obj.game_uuid, boost_uuid);
 }
 
-UTEST_F(ProcessRowRequestBodyTest, CreateAndFromToJson) {
-  ProcessRowRequestBody process_row_request_1 = {
+UTEST_F(RequestCheckTheRowBodyTest, CreateAndFromToJson) {
+  RequestCheckTheRowBody process_row_request_1 = {
       .user_uuid = userver::utils::BoostUuidFromString(str_uuid),
       .game_uuid = userver::utils::BoostUuidFromString(str_uuid),
       .word = str_word};
 
   auto userver_json =
       userver::formats::json::FromString(json_process_row_request);
-  ProcessRowRequestBody process_row_request_2 =
-      userver_json.As<ProcessRowRequestBody>();
+  RequestCheckTheRowBody process_row_request_2 =
+      userver_json.As<RequestCheckTheRowBody>();
 
   EXPECT_EQ(process_row_request_1.game_uuid, process_row_request_2.game_uuid);
   EXPECT_EQ(process_row_request_1.user_uuid, process_row_request_2.user_uuid);
@@ -147,8 +147,8 @@ UTEST_F(ProcessRowRequestBodyTest, CreateAndFromToJson) {
   EXPECT_EQ(json_process_row_request, json_process_row_request_1);
 }
 
-UTEST_F(ProcessRowResponseBodyTest, CreateAndFromToJson) {
-  ProcessRowResponseBody process_row_response_1 = {
+UTEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
+  ResponseCheckTheRowBody process_row_response_1 = {
       .check_the_row_result = check_the_row_result_,
       .the_char_colors =
           std::vector<int>{char_color_1, char_color_2, char_color_3,
@@ -157,8 +157,8 @@ UTEST_F(ProcessRowResponseBodyTest, CreateAndFromToJson) {
 
   auto userver_json =
       userver::formats::json::FromString(json_process_row_response);
-  ProcessRowResponseBody process_row_response_2 =
-      userver_json.As<ProcessRowResponseBody>();
+  ResponseCheckTheRowBody process_row_response_2 =
+      userver_json.As<ResponseCheckTheRowBody>();
 
   EXPECT_EQ(process_row_response_1.check_the_row_result,
             process_row_response_2.check_the_row_result);

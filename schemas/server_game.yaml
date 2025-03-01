@@ -1,7 +1,7 @@
 # yaml
 components:
     schemas:
-        NewGameRequestBody:
+        RequestNewGameBody:
             type: object
             additionalProperties: false
             properties:
@@ -9,7 +9,7 @@ components:
                     $ref: 'types.yaml#/components/schemas/UUID'
             required:
               - user_uuid
-        NewGameResponseBody:
+        ResponseNewGameBody:
             type: object
             additionalProperties: false
             properties:
@@ -17,7 +17,7 @@ components:
                     $ref: 'types.yaml#/components/schemas/UUID'
             required:
               - game_uuid
-        ProcessRowRequestBody:
+        RequestCheckTheRowBody:
             type: object
             additionalProperties: false
             properties:
@@ -31,7 +31,7 @@ components:
               - game_uuid
               - user_uuid
               - word
-        ProcessRowResponseBody:
+        ResponseCheckTheRowBody:
             type: object
             additionalProperties: false
             properties:
