@@ -34,11 +34,6 @@ userver_target_generate_chaotic(${PROJECT_NAME}-chgen
 )
 # /// [chaotic]
 
-# /// [enums]
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/enums
-     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src)
-# /// [enums]
-
 # /// [unittests]
 add_executable(${PROJECT_NAME}-unittest
 	       unittests/server_game_test.cpp)

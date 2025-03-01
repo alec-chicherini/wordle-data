@@ -24,8 +24,6 @@ FROM ubuntu2404_userver_2_7 AS wordle_json_build
 COPY . /wordle-json
 RUN cd /wordle-json && mkdir build && cd build && \
     cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 && \
-    cmake --build . && \
-    mkdir /result && \
-    cp -r src/* /result 
+    cmake --build .
 
 ENTRYPOINT ["ctest","-VV","--test-dir","/wordle-json/build" ]
