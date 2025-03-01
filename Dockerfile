@@ -26,6 +26,6 @@ RUN cd /wordle-json && mkdir build && cd build && \
     cmake .. -DCMAKE_C_COMPILER=gcc-13 -DCMAKE_CXX_COMPILER=g++-13 && \
     cmake --build . && \
     mkdir /result && \
-    cp src/schemas/* /result 
+    cp -r src/* /result 
 
 ENTRYPOINT ["ctest","-VV","--test-dir","/wordle-json/build" ]

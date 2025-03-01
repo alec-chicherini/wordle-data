@@ -34,11 +34,16 @@ userver_target_generate_chaotic(${PROJECT_NAME}-chgen
 )
 # /// [chaotic]
 
+# /// [enums]
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/src/enums
+     DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/src)
+# /// [enums]
+
 # /// [unittests]
 add_executable(${PROJECT_NAME}-unittest
-	       unittests/game_server_test.cpp)
+	       unittests/server_game_test.cpp)
 target_link_libraries(${PROJECT_NAME}-unittest ${PROJECT_NAME}-chgen userver::utest)
-target_include_directories(${PROJECT_NAME}-unittest PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src/schemas)
+target_include_directories(${PROJECT_NAME}-unittest PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src)
 target_compile_features(${PROJECT_NAME}-unittest PUBLIC cxx_std_20)
 add_google_tests(${PROJECT_NAME}-unittest)
 # /// [unittests]
