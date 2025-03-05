@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(wordle_json CXX)
+project(wordle_data CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,7 +22,7 @@ file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
 userver_target_generate_chaotic(${PROJECT_NAME}-chgen
     ARGS
         # Map '/components/schemas/*' JSONSchema types to C++ types in 'samples::hello' namespace
-        -n "/components/schemas/([^/]*)/=wordle_json::{0}"
+        -n "/components/schemas/([^/]*)/=wordle_data::{0}"
         # Generate serializers for responses
         --generate-serializers
     OUTPUT_DIR
