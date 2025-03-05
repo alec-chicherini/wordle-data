@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package wordle_data;
+
+import "uuid.proto";
+
+message ResponseNewGameBody{
+	UUID game_uuid = 1;
+}

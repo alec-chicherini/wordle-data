@@ -1,18 +1,18 @@
 # wordle-data
-- В этом проекте находятся общие файлы для других проектов wordle.
+- В этом проекте находятся общие файлы для проекта wordle.
 	- .proto файлы
 	- перечисления
-- А так же тесты для файлов.
+- А так же тесты для сгенерированных файлов на с++.
 
-## Сгенерировать файлы
+## Собрать тесты
 ```bash
-git clone https://github.com/alec-chicherini/wordle-json.git
-cd wordle-json
-docker build --target=wordle_json_build . -t wordle-json-build
+git clone https://github.com/alec-chicherini/wordle-data.git
+cd wordle-data
+docker build --target=wordle_data_build . -t wordle-data-build
 cd ~
 ```
 
 ## Запустить тесты
 ```bash
-docker run --rm --privileged wordle-json-build
+docker run --rm --privileged wordle-data-build
 ```

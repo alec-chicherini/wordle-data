@@ -10,35 +10,61 @@ add_compile_options(
     -Wno-unused-variable
 )
 
-# /// [find_userver]
-find_package(userver COMPONENTS core chaotic REQUIRED)
-# Note: If userver was added via add_subdirectory(path/to/userver), then
-# the userver_setup_environment() should be called here.
-# /// [find_userver]
+# GTest
+include(FetchContent)
 
-# /// [chaotic]
-# cmake
-file(GLOB_RECURSE SCHEMAS ${CMAKE_CURRENT_SOURCE_DIR}/schemas/*.yaml)
-userver_target_generate_chaotic(${PROJECT_NAME}-chgen
-    ARGS
-        # Map '/components/schemas/*' JSONSchema types to C++ types in 'samples::hello' namespace
-        -n "/components/schemas/([^/]*)/=wordle_data::{0}"
-        # Generate serializers for responses
-        --generate-serializers
-    OUTPUT_DIR
-        ${CMAKE_CURRENT_BINARY_DIR}/src
-    SCHEMAS
-        ${SCHEMAS}
-    RELATIVE_TO
-        ${CMAKE_CURRENT_SOURCE_DIR}
+option(BUILD_GMOCK OFF)
+option(INSTALL_GTEST OFF)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        v1.16.0
 )
-# /// [chaotic]
+FetchContent_MakeAvailable(googletest)
+add_library(GTest::GTest INTERFACE IMPORTED)
+target_link_libraries(GTest::GTest INTERFACE gtest_main)
+enable_testing()
+# GTest
 
-# /// [unittests]
-add_executable(${PROJECT_NAME}-unittest
-	       unittests/server_game_test.cpp)
-target_link_libraries(${PROJECT_NAME}-unittest ${PROJECT_NAME}-chgen userver::utest)
-target_include_directories(${PROJECT_NAME}-unittest PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src)
-target_compile_features(${PROJECT_NAME}-unittest PUBLIC cxx_std_20)
-add_google_tests(${PROJECT_NAME}-unittest)
-# /// [unittests]
+# Protobuf
+find_package(Protobuf REQUIRED)
+
+if (NOT Protobuf_FOUND)
+    message(FATAL_ERROR "Protobuf lib not found!")
+endif()
+if(Protobuf_VERBOSE)
+  message(STATUS "Using Protocol Buffers ${protobuf_VERSION}")
+endif()
+
+set(PROTOS_
+    uuid.proto
+    enum_the_char_color.proto
+    enum_check_the_row_result.proto
+    request_check_the_row_body.proto
+    request_new_game_body.proto
+    response_check_the_row_body.proto
+    response_new_game_body.proto
+)
+list(TRANSFORM PROTOS_ PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/proto/")
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/src/generated/")
+
+add_library(${PROJECT_NAME}-generated STATIC ${PROTOS_})
+protobuf_generate (
+    TARGET ${PROJECT_NAME}-generated
+    LANGUAGE cpp
+    PROTOC_OUT_DIR  "${CMAKE_CURRENT_BINARY_DIR}/src/generated/"
+    OUT_VAR GENERATED_CPP_FILES
+    PROTOS ${PROTOS_}
+    IMPORT_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/proto/
+)
+target_link_libraries(${PROJECT_NAME}-generated PUBLIC ${PROTOBUF_LIBRARY})
+message("GENERATED_CPP_FILES = ${GENERATED_CPP_FILES}")
+# Protobuf
+
+# unittests
+add_executable(${PROJECT_NAME}-test unittests/server_game_test.cpp)
+target_link_libraries(${PROJECT_NAME}-test PUBLIC GTest::GTest ${PROJECT_NAME}-generated)
+target_compile_features(${PROJECT_NAME}-test PUBLIC cxx_std_20)
+target_include_directories(${PROJECT_NAME}-test PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/src/generated/")
+add_test(${PROJECT_NAME}-google-test ${PROJECT_NAME}-test)
+# unittests

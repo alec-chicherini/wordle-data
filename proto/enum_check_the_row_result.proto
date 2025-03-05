@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package wordle_data;
+
+enum CheckTheRowResult{
+  kNoneCheckTheRowResult = 0;
+  kWordDoNotExists = 1;
+  kWordExists = 2;
+  kWordIsAnswer = 3;
+  kServerError = 4;
+}

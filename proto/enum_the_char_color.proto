@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package wordle_data;
+
+enum TheCharColor{
+  kNoneTheCharColor = 0;
+  kGreen = 1;
+  kYellow = 2;
+}

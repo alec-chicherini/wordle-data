@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package wordle_data;
+
+import "enum_check_the_row_result.proto";
+import "enum_the_char_color.proto";
+
+message ResponseCheckTheRowBody{
+	CheckTheRowResult check_the_row_result = 1;
+	repeated TheCharColor the_char_colors = 2;
+	optional int32 number_of_attempts_left = 3;
+}

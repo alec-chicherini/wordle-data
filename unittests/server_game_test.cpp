@@ -1,181 +1,131 @@
-#include <boost/algorithm/string.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <enums/server_game.hpp>
+#include <gtest/gtest.h>
+#include <request_check_the_row_body.pb.h>
+#include <request_new_game_body.pb.h>
+#include <response_check_the_row_body.pb.h>
+#include <response_new_game_body.pb.h>
+
 #include <format>
-#include <schemas/server_game.hpp>
-#include <userver/formats/json.hpp> 
-#include <userver/utest/utest.hpp>
-#include <userver/utils/boost_uuid4.hpp>
-using namespace wordle_json;
+
+using namespace wordle_data;
 
 class GameServerTest : public ::testing::Test {
  protected:
   GameServerTest() {
+    GOOGLE_PROTOBUF_VERIFY_VERSION;
     str_uuid = std::string("01234567-89ab-cdef-0123-456789abcdef");
   }
   std::string str_uuid;
 };
 class RequestNewGameBodyTest : public GameServerTest {
  protected:
-  RequestNewGameBodyTest() {
-    json_new_game_request =
-        std::string(std::format(R"({{"user_uuid":"{}"}})", str_uuid));
-  }
-
- public:
-  std::string json_new_game_request;
+  RequestNewGameBodyTest() {}
 };
 class ResponseNewGameBodyTest : public GameServerTest {
  protected:
-  ResponseNewGameBodyTest() {
-    json_new_game_response =
-        std::string(std::format(R"({{"game_uuid":"{}"}})", str_uuid));
-  }
-
- public:
-  std::string json_new_game_response;
+  ResponseNewGameBodyTest() {}
 };
 class RequestCheckTheRowBodyTest : public GameServerTest {
  protected:
-  RequestCheckTheRowBodyTest() {
-    str_word = "ЗАЧЕМ";
-    json_process_row_request = std::string(std::format(
-        R"({{"user_uuid":"{}",
-             "game_uuid":"{}", 
-             "word":"{}"}})",
-        str_uuid, str_uuid, str_word));
-  }
+  RequestCheckTheRowBodyTest() { str_word = "ЗАЧЕМ"; }
 
  public:
-  std::string json_process_row_request;
   std::string str_word;
 };
 class ResponseCheckTheRowBodyTest : public GameServerTest {
  protected:
-  ResponseCheckTheRowBodyTest() {
-    check_the_row_result_ = static_cast<int>(CheckTheRowResult::kWordIsAnswer);
-    char_color_1 = static_cast<int>(TheCharColor::kGreen);
-    char_color_2 = static_cast<int>(TheCharColor::kGreen);
-    char_color_3 = static_cast<int>(TheCharColor::kGreen);
-    char_color_4 = static_cast<int>(TheCharColor::kGreen);
-    char_color_5 = static_cast<int>(TheCharColor::kGreen);
-    number_of_attempts_left_ = 1;
-    json_process_row_response = std::string(std::format(
-        R"({{"check_the_row_result":{},
-                         "the_char_colors":[{},{},{},{},{}],
-                         "number_of_attempts_left":{}}})",
-        check_the_row_result_, char_color_1, char_color_2, char_color_3,
-        char_color_4, char_color_5, number_of_attempts_left_));
-  }
-
- public:
-  std::string json_process_row_response;
-  int check_the_row_result_;
-  int char_color_1;
-  int char_color_2;
-  int char_color_3;
-  int char_color_4;
-  int char_color_5;
-  int number_of_attempts_left_;
+  ResponseCheckTheRowBodyTest() {}
 };
 
-UTEST_F(RequestNewGameBodyTest, Create) {
-  auto uuid_rand = userver::utils::generators::GenerateBoostUuid();
-  RequestNewGameBody obj_1;
-  obj_1.user_uuid = uuid_rand;
-  RequestNewGameBody obj_2{uuid_rand};
-  RequestNewGameBody obj_3 = {.user_uuid = uuid_rand};
+TEST_F(RequestNewGameBodyTest, CreateAndFromToString) {
+  UUID* uuid_ = new UUID;
+  uuid_->set_value(str_uuid);
+  RequestNewGameBody* obj_1 = new RequestNewGameBody();
+  obj_1->set_allocated_user_uuid(uuid_);
+  RequestNewGameBody* obj_2 = new RequestNewGameBody(*obj_1);
+  EXPECT_EQ(obj_1->user_uuid().value(), obj_2->user_uuid().value());
 
-  EXPECT_EQ(obj_1.user_uuid, obj_2.user_uuid);
-  EXPECT_EQ(obj_1.user_uuid, obj_3.user_uuid);
+  std::string serialized_1;
+  obj_1->SerializeToString(&serialized_1);
+  std::string serialized_2;
+  obj_2->SerializeToString(&serialized_2);
+  EXPECT_EQ(serialized_1, serialized_2);
+
+  RequestNewGameBody* obj_3 = new RequestNewGameBody();
+  RequestNewGameBody* obj_4 = new RequestNewGameBody();
+  obj_3->ParseFromString(serialized_1.c_str());
+  obj_4->ParseFromString(serialized_2.c_str());
+  EXPECT_EQ(obj_3->user_uuid().value(), obj_4->user_uuid().value());
 }
 
-UTEST_F(RequestNewGameBodyTest, FromJson) {
-  auto userver_json = userver::formats::json::FromString(json_new_game_request);
-  RequestNewGameBody obj = userver_json.As<RequestNewGameBody>();
+TEST_F(ResponseNewGameBodyTest, CreateAndFromToString) {
+  UUID* uuid_ = new UUID;
+  uuid_->set_value(str_uuid);
+  ResponseNewGameBody* obj_1 = new ResponseNewGameBody();
+  obj_1->set_allocated_game_uuid(uuid_);
+  ResponseNewGameBody* obj_2 = new ResponseNewGameBody(*obj_1);
+  EXPECT_EQ(obj_1->game_uuid().value(), obj_2->game_uuid().value());
 
-  auto boost_uuid = userver::utils::BoostUuidFromString(str_uuid);
+  std::string serialized_1;
+  obj_1->SerializeToString(&serialized_1);
+  std::string serialized_2;
+  obj_2->SerializeToString(&serialized_2);
+  EXPECT_EQ(serialized_1, serialized_2);
 
-  EXPECT_EQ(obj.user_uuid, boost_uuid);
+  ResponseNewGameBody* obj_3 = new ResponseNewGameBody();
+  ResponseNewGameBody* obj_4 = new ResponseNewGameBody();
+  obj_3->ParseFromString(serialized_1.c_str());
+  obj_4->ParseFromString(serialized_2.c_str());
+  EXPECT_EQ(obj_3->game_uuid().value(), obj_4->game_uuid().value());
 }
 
-UTEST_F(ResponseNewGameBodyTest, Create) {
-  auto uuid_rand = userver::utils::generators::GenerateBoostUuid();
-  ResponseNewGameBody obj_1;
-  obj_1.game_uuid = uuid_rand;
-  ResponseNewGameBody obj_2{uuid_rand};
-  ResponseNewGameBody obj_3 = {.game_uuid = uuid_rand};
+TEST_F(RequestCheckTheRowBodyTest, CreateAndFromToString) {
+  UUID* uuid_1 = new UUID;
+  uuid_1->set_value(str_uuid);
+  UUID* uuid_2 = new UUID;
+  uuid_2->set_value(str_uuid);
 
-  EXPECT_EQ(obj_1.game_uuid, obj_2.game_uuid);
-  EXPECT_EQ(obj_1.game_uuid, obj_3.game_uuid);
+  RequestCheckTheRowBody process_row_request_1;
+  process_row_request_1.set_allocated_game_uuid(uuid_1);
+  process_row_request_1.set_allocated_user_uuid(uuid_2);
+  process_row_request_1.set_word(str_word);
+
+  std::string serialized_1;
+  process_row_request_1.SerializeToString(&serialized_1);
+
+  RequestCheckTheRowBody process_row_request_2;
+  process_row_request_2.ParseFromString(serialized_1.c_str());
+
+  EXPECT_EQ(process_row_request_1.user_uuid().value(),
+            process_row_request_2.user_uuid().value());
+  EXPECT_EQ(process_row_request_1.game_uuid().value(),
+            process_row_request_2.game_uuid().value());
+  EXPECT_EQ(process_row_request_2.word(), str_word);
 }
 
-UTEST_F(ResponseNewGameBodyTest, FromJson) {
-  auto userver_json =
-      userver::formats::json::FromString(json_new_game_response);
-  ResponseNewGameBody obj = userver_json.As<ResponseNewGameBody>();
+TEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
+  ResponseCheckTheRowBody process_row_response_1;
+  process_row_response_1.set_check_the_row_result(
+      CheckTheRowResult::kWordIsAnswer);
+  process_row_response_1.add_the_char_colors(TheCharColor::kGreen);
+  process_row_response_1.add_the_char_colors(TheCharColor::kNoneTheCharColor);
+  process_row_response_1.add_the_char_colors(TheCharColor::kYellow);
+  process_row_response_1.add_the_char_colors(TheCharColor::kGreen);
+  process_row_response_1.add_the_char_colors(TheCharColor::kNoneTheCharColor);
+  process_row_response_1.set_number_of_attempts_left(3);
 
-  auto boost_uuid = userver::utils::BoostUuidFromString(str_uuid);
+  std::string serialized_1;
+  process_row_response_1.SerializeToString(&serialized_1);
 
-  EXPECT_EQ(obj.game_uuid, boost_uuid);
-}
-
-UTEST_F(RequestCheckTheRowBodyTest, CreateAndFromToJson) {
-  RequestCheckTheRowBody process_row_request_1 = {
-      .user_uuid = userver::utils::BoostUuidFromString(str_uuid),
-      .game_uuid = userver::utils::BoostUuidFromString(str_uuid),
-      .word = str_word};
-
-  auto userver_json =
-      userver::formats::json::FromString(json_process_row_request);
-  RequestCheckTheRowBody process_row_request_2 =
-      userver_json.As<RequestCheckTheRowBody>();
-
-  EXPECT_EQ(process_row_request_1.game_uuid, process_row_request_2.game_uuid);
-  EXPECT_EQ(process_row_request_1.user_uuid, process_row_request_2.user_uuid);
-  EXPECT_EQ(process_row_request_1.word, process_row_request_2.word);
-
-  userver_json = userver::formats::json::ValueBuilder{process_row_request_1}
-                     .ExtractValue();
-  std::string json_process_row_request_1 =
-      userver::formats::json::ToString(userver_json);
-
-  boost::erase_all(json_process_row_request, "\n");
-  boost::erase_all(json_process_row_request_1, "\n");
-  boost::erase_all(json_process_row_request, " ");
-  boost::erase_all(json_process_row_request_1, " ");
-  EXPECT_EQ(json_process_row_request, json_process_row_request_1);
-}
-
-UTEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
-  ResponseCheckTheRowBody process_row_response_1 = {
-      .check_the_row_result = check_the_row_result_,
-      .the_char_colors =
-          std::vector<int>{char_color_1, char_color_2, char_color_3,
-                           char_color_4, char_color_5},
-      .number_of_attempts_left = number_of_attempts_left_};
-
-  auto userver_json =
-      userver::formats::json::FromString(json_process_row_response);
-  ResponseCheckTheRowBody process_row_response_2 =
-      userver_json.As<ResponseCheckTheRowBody>();
-
-  EXPECT_EQ(process_row_response_1.check_the_row_result,
-            process_row_response_2.check_the_row_result);
-  EXPECT_EQ(process_row_response_1.number_of_attempts_left,
-            process_row_response_2.number_of_attempts_left);
-  EXPECT_EQ(process_row_response_1.the_char_colors.size(),
-            process_row_response_2.the_char_colors.size());
-  EXPECT_EQ(process_row_response_1.the_char_colors,
-            process_row_response_2.the_char_colors);
-
-  userver_json = userver::formats::json::ValueBuilder{process_row_response_1}
-                     .ExtractValue();
-  std::string json_process_row_response_1 =
-      userver::formats::json::ToString(userver_json);
-  boost::erase_all(json_process_row_response, "\n");
-  boost::erase_all(json_process_row_response_1, "\n");
-  boost::erase_all(json_process_row_response, " ");
-  boost::erase_all(json_process_row_response_1, " ");
-  EXPECT_EQ(json_process_row_response, json_process_row_response_1);
+  ResponseCheckTheRowBody process_row_response_2;
+  process_row_response_2.ParseFromString(serialized_1.c_str());
+  EXPECT_EQ(process_row_response_1.number_of_attempts_left(), 3);
+  EXPECT_EQ(process_row_response_1.check_the_row_result(),
+            CheckTheRowResult::kWordIsAnswer);
+  EXPECT_EQ(process_row_response_1.the_char_colors(0), TheCharColor::kGreen);
+  EXPECT_EQ(process_row_response_1.the_char_colors(1),
+            TheCharColor::kNoneTheCharColor);
+  EXPECT_EQ(process_row_response_1.the_char_colors(2), TheCharColor::kYellow);
+  EXPECT_EQ(process_row_response_1.the_char_colors(3), TheCharColor::kGreen);
+  EXPECT_EQ(process_row_response_1.the_char_colors(4),
+            TheCharColor::kNoneTheCharColor);
 }

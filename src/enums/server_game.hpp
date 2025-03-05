@@ -23,12 +23,13 @@ enum class RegistrationStatus {
   kServerError
 };
 
-enum class CheckTheRowResult {
-  kNone = 0,
-  kWordDoNotExists,
-  kWordExists,
-  kWordIsAnswer,
-  kServerError
-};
-
-enum class TheCharColor { kNone, kGreen, kYellow };
+/// moved to proto
+//enum class CheckTheRowResult {
+//  kNone = 0,
+//  kWordDoNotExists,
+//  kWordExists,
+//  kWordIsAnswer,
+//  kServerError
+//};
+//
+//enum class TheCharColor { kNone, kGreen, kYellow };
