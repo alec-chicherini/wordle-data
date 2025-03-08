@@ -9,4 +9,5 @@ message ResponseCheckTheRowBody{
 	CheckTheRowResult check_the_row_result = 1;
 	repeated TheCharColor the_char_colors = 2;
 	optional int32 number_of_attempts_left = 3;
+	optional string word_answer = 4;
 }

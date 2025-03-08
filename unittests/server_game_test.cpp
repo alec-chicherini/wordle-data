@@ -33,7 +33,10 @@ class RequestCheckTheRowBodyTest : public GameServerTest {
 };
 class ResponseCheckTheRowBodyTest : public GameServerTest {
  protected:
-  ResponseCheckTheRowBodyTest() {}
+  ResponseCheckTheRowBodyTest() { str_word = "ЗАТЕМ"; }
+
+ public:
+  std::string str_word;
 };
 
 TEST_F(RequestNewGameBodyTest, CreateAndFromToString) {
@@ -112,20 +115,22 @@ TEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
   process_row_response_1.add_the_char_colors(TheCharColor::kGreen);
   process_row_response_1.add_the_char_colors(TheCharColor::kNoneTheCharColor);
   process_row_response_1.set_number_of_attempts_left(3);
+  process_row_response_1.set_word_answer(str_word);
 
   std::string serialized_1;
   process_row_response_1.SerializeToString(&serialized_1);
 
   ResponseCheckTheRowBody process_row_response_2;
   process_row_response_2.ParseFromString(serialized_1.c_str());
-  EXPECT_EQ(process_row_response_1.number_of_attempts_left(), 3);
-  EXPECT_EQ(process_row_response_1.check_the_row_result(),
+  EXPECT_EQ(process_row_response_2.number_of_attempts_left(), 3);
+  EXPECT_EQ(process_row_response_2.check_the_row_result(),
             CheckTheRowResult::kWordIsAnswer);
-  EXPECT_EQ(process_row_response_1.the_char_colors(0), TheCharColor::kGreen);
-  EXPECT_EQ(process_row_response_1.the_char_colors(1),
+  EXPECT_EQ(process_row_response_2.the_char_colors(0), TheCharColor::kGreen);
+  EXPECT_EQ(process_row_response_2.the_char_colors(1),
             TheCharColor::kNoneTheCharColor);
-  EXPECT_EQ(process_row_response_1.the_char_colors(2), TheCharColor::kYellow);
-  EXPECT_EQ(process_row_response_1.the_char_colors(3), TheCharColor::kGreen);
-  EXPECT_EQ(process_row_response_1.the_char_colors(4),
+  EXPECT_EQ(process_row_response_2.the_char_colors(2), TheCharColor::kYellow);
+  EXPECT_EQ(process_row_response_2.the_char_colors(3), TheCharColor::kGreen);
+  EXPECT_EQ(process_row_response_2.the_char_colors(4),
             TheCharColor::kNoneTheCharColor);
+  EXPECT_EQ(process_row_response_2.word_answer(), str_word);
 }
