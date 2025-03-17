@@ -121,7 +121,7 @@ TEST_F(ResponseRowBodyTest, CreateAndFromToJson) {
   process_row_response_1.SerializeToString(&serialized_1);
 
   ResponseRowBody process_row_response_2;
-  process_row_response_2.ParseFromString(serialized_1.c_str());
+  process_row_response_2.ParseFromString(serialized_1);
   EXPECT_EQ(process_row_response_2.number_of_attempts_left(), 3);
   EXPECT_EQ(process_row_response_2.row_result(),
             RowResult::kWordIsAnswer);
