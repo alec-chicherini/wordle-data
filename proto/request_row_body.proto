@@ -4,7 +4,7 @@ package wordle_data;
 
 import "uuid.proto";
 
-message RequestCheckTheRowBody{
+message RequestRowBody{
 	UUID user_uuid = 1;
 	UUID game_uuid = 2;
 	string word = 3;

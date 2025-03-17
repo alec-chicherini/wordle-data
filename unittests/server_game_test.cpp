@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include <request_check_the_row_body.pb.h>
+#include <request_row_body.pb.h>
 #include <request_new_game_body.pb.h>
-#include <response_check_the_row_body.pb.h>
+#include <response_row_body.pb.h>
 #include <response_new_game_body.pb.h>
 
 #include <format>
@@ -24,16 +24,16 @@ class ResponseNewGameBodyTest : public GameServerTest {
  protected:
   ResponseNewGameBodyTest() {}
 };
-class RequestCheckTheRowBodyTest : public GameServerTest {
+class RequestRowBodyTest : public GameServerTest {
  protected:
-  RequestCheckTheRowBodyTest() { str_word = "ЗАЧЕМ"; }
+  RequestRowBodyTest() { str_word = "ЗАЧЕМ"; }
 
  public:
   std::string str_word;
 };
-class ResponseCheckTheRowBodyTest : public GameServerTest {
+class ResponseRowBodyTest : public GameServerTest {
  protected:
-  ResponseCheckTheRowBodyTest() { str_word = "ЗАТЕМ"; }
+  ResponseRowBodyTest() { str_word = "ЗАТЕМ"; }
 
  public:
   std::string str_word;
@@ -81,13 +81,13 @@ TEST_F(ResponseNewGameBodyTest, CreateAndFromToString) {
   EXPECT_EQ(obj_3->game_uuid().value(), obj_4->game_uuid().value());
 }
 
-TEST_F(RequestCheckTheRowBodyTest, CreateAndFromToString) {
+TEST_F(RequestRowBodyTest, CreateAndFromToString) {
   UUID* uuid_1 = new UUID;
   uuid_1->set_value(str_uuid);
   UUID* uuid_2 = new UUID;
   uuid_2->set_value(str_uuid);
 
-  RequestCheckTheRowBody process_row_request_1;
+  RequestRowBody process_row_request_1;
   process_row_request_1.set_allocated_game_uuid(uuid_1);
   process_row_request_1.set_allocated_user_uuid(uuid_2);
   process_row_request_1.set_word(str_word);
@@ -95,7 +95,7 @@ TEST_F(RequestCheckTheRowBodyTest, CreateAndFromToString) {
   std::string serialized_1;
   process_row_request_1.SerializeToString(&serialized_1);
 
-  RequestCheckTheRowBody process_row_request_2;
+  RequestRowBody process_row_request_2;
   process_row_request_2.ParseFromString(serialized_1.c_str());
 
   EXPECT_EQ(process_row_request_1.user_uuid().value(),
@@ -105,10 +105,10 @@ TEST_F(RequestCheckTheRowBodyTest, CreateAndFromToString) {
   EXPECT_EQ(process_row_request_2.word(), str_word);
 }
 
-TEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
-  ResponseCheckTheRowBody process_row_response_1;
-  process_row_response_1.set_check_the_row_result(
-      CheckTheRowResult::kWordIsAnswer);
+TEST_F(ResponseRowBodyTest, CreateAndFromToJson) {
+  ResponseRowBody process_row_response_1;
+  process_row_response_1.set_row_result(
+      RowResult::kWordIsAnswer);
   process_row_response_1.add_the_char_colors(TheCharColor::kGreen);
   process_row_response_1.add_the_char_colors(TheCharColor::kNoneTheCharColor);
   process_row_response_1.add_the_char_colors(TheCharColor::kYellow);
@@ -120,11 +120,11 @@ TEST_F(ResponseCheckTheRowBodyTest, CreateAndFromToJson) {
   std::string serialized_1;
   process_row_response_1.SerializeToString(&serialized_1);
 
-  ResponseCheckTheRowBody process_row_response_2;
+  ResponseRowBody process_row_response_2;
   process_row_response_2.ParseFromString(serialized_1.c_str());
   EXPECT_EQ(process_row_response_2.number_of_attempts_left(), 3);
-  EXPECT_EQ(process_row_response_2.check_the_row_result(),
-            CheckTheRowResult::kWordIsAnswer);
+  EXPECT_EQ(process_row_response_2.row_result(),
+            RowResult::kWordIsAnswer);
   EXPECT_EQ(process_row_response_2.the_char_colors(0), TheCharColor::kGreen);
   EXPECT_EQ(process_row_response_2.the_char_colors(1),
             TheCharColor::kNoneTheCharColor);

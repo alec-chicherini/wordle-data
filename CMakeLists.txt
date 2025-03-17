@@ -39,10 +39,10 @@ endif()
 set(PROTOS_
     uuid.proto
     enum_the_char_color.proto
-    enum_check_the_row_result.proto
-    request_check_the_row_body.proto
+    enum_row_result.proto
+    request_row_body.proto
     request_new_game_body.proto
-    response_check_the_row_body.proto
+    response_row_body.proto
     response_new_game_body.proto
 )
 list(TRANSFORM PROTOS_ PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/proto/")

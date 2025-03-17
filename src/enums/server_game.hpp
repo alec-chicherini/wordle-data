@@ -24,7 +24,7 @@ enum class RegistrationStatus {
 };
 
 /// moved to proto
-//enum class CheckTheRowResult {
+//enum class RowResult {
 //  kNone = 0,
 //  kWordDoNotExists,
 //  kWordExists,
