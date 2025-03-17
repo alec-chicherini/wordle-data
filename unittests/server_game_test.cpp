@@ -55,8 +55,8 @@ TEST_F(RequestNewGameBodyTest, CreateAndFromToString) {
 
   RequestNewGameBody* obj_3 = new RequestNewGameBody();
   RequestNewGameBody* obj_4 = new RequestNewGameBody();
-  obj_3->ParseFromString(serialized_1.c_str());
-  obj_4->ParseFromString(serialized_2.c_str());
+  obj_3->ParseFromString(serialized_1);
+  obj_4->ParseFromString(serialized_2);
   EXPECT_EQ(obj_3->user_uuid().value(), obj_4->user_uuid().value());
 }
 
@@ -76,8 +76,8 @@ TEST_F(ResponseNewGameBodyTest, CreateAndFromToString) {
 
   ResponseNewGameBody* obj_3 = new ResponseNewGameBody();
   ResponseNewGameBody* obj_4 = new ResponseNewGameBody();
-  obj_3->ParseFromString(serialized_1.c_str());
-  obj_4->ParseFromString(serialized_2.c_str());
+  obj_3->ParseFromString(serialized_1);
+  obj_4->ParseFromString(serialized_2);
   EXPECT_EQ(obj_3->game_uuid().value(), obj_4->game_uuid().value());
 }
 
@@ -96,7 +96,7 @@ TEST_F(RequestRowBodyTest, CreateAndFromToString) {
   process_row_request_1.SerializeToString(&serialized_1);
 
   RequestRowBody process_row_request_2;
-  process_row_request_2.ParseFromString(serialized_1.c_str());
+  process_row_request_2.ParseFromString(serialized_1);
 
   EXPECT_EQ(process_row_request_1.user_uuid().value(),
             process_row_request_2.user_uuid().value());
