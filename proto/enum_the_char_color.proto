@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package wordle_data;
-
+// https://github.com/alec-chicherini/wordle-server-postgre/blob/main/sqls/create_server_game_tables.sql
 enum TheCharColor{
   kNoneTheCharColor = 0;
   kGreen = 1;
