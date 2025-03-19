@@ -8,4 +8,5 @@ enum RowResult{
   kWordExists = 2;
   kWordIsAnswer = 3;
   kServerError = 4;
+  kGameOver = 5;
 }
