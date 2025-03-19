@@ -8,6 +8,6 @@ import "enum_the_char_color.proto";
 message ResponseRowBody{
 	RowResult row_result = 1;
 	repeated TheCharColor the_char_colors = 2;
-	optional int32 number_of_attempts_left = 3;
+	optional int32 number_of_attempts = 3;
 	optional string word_answer = 4;
 }

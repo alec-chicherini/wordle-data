@@ -114,7 +114,7 @@ TEST_F(ResponseRowBodyTest, CreateAndFromToJson) {
   process_row_response_1.add_the_char_colors(TheCharColor::kYellow);
   process_row_response_1.add_the_char_colors(TheCharColor::kGreen);
   process_row_response_1.add_the_char_colors(TheCharColor::kNoneTheCharColor);
-  process_row_response_1.set_number_of_attempts_left(3);
+  process_row_response_1.set_number_of_attempts(3);
   process_row_response_1.set_word_answer(str_word);
 
   std::string serialized_1;
@@ -122,7 +122,7 @@ TEST_F(ResponseRowBodyTest, CreateAndFromToJson) {
 
   ResponseRowBody process_row_response_2;
   process_row_response_2.ParseFromString(serialized_1);
-  EXPECT_EQ(process_row_response_2.number_of_attempts_left(), 3);
+  EXPECT_EQ(process_row_response_2.number_of_attempts(), 3);
   EXPECT_EQ(process_row_response_2.row_result(),
             RowResult::kWordIsAnswer);
   EXPECT_EQ(process_row_response_2.the_char_colors(0), TheCharColor::kGreen);
